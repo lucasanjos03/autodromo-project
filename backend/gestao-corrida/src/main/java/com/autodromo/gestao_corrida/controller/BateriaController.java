@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/baterias") // Endereço que você vai digitar no navegador
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/baterias")
 public class BateriaController {
 
     @Autowired
