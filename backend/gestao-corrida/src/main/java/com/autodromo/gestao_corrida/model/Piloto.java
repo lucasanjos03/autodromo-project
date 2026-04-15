@@ -15,4 +15,7 @@ public class Piloto {
     private Integer idade;
     private String equipe;
     private Integer numeroCarro;
+
+    public void setBateria(Bateria bateria) {
+    }
 }
