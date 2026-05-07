@@ -20,7 +20,7 @@ public class BateriaController {
     public List<Bateria> listarTodas() {
         return repository.findAll();
     }
-    @PostMapping("/{id}/pilotos") // Define o caminho /baterias/{id}/pilotos
+    @PostMapping("/{id}/pilotos")
     public Bateria adicionarPiloto(@PathVariable Long id, @RequestBody Piloto piloto) {
         // 1. Busca a bateria pelo ID que veio na URL
         Bateria bateria = repository.findById(id)
@@ -35,4 +35,17 @@ public class BateriaController {
         // 4. Salva a bateria (como o cascade está configurado, ele salva o piloto junto)
         return repository.save(bateria);
     }
-}
+
+    @PatchMapping("/{id}/status")
+    public Bateria atualizarStatus(@PathVariable Long id, @RequestBody String novoStatus) {
+        Bateria bateria = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bateria não encontrada"));
+
+        // 2. Limpa aspas do JSON e espaços em branco que podem vir do frontend
+        String statusLimpo = novoStatus.replace("\"", "").trim();
+
+        // 3. Atualiza e salva
+        bateria.setStatus(statusLimpo);
+        return repository.save(bateria);
+    }
+    }
