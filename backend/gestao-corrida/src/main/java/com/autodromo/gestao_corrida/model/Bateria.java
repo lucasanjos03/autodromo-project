@@ -18,16 +18,20 @@ public class Bateria {
 
     private LocalDateTime horario;
 
-    private String status; // "AGENDADA", "EM_CURSO", "FINALIZADA"
+    private String status = "PENDENTE"; // "PENDENTE", "EM_ANDAMENTO", "FINALIZADA"
 
     private Integer vagasOcupadas = 0;
 
     @Column(updatable = false)
     private final Integer limiteVagas = 15;
 
+    // Campos para o Pódio (IDs dos pilotos)
+    private Long primeiroLugarId;
+    private Long segundoLugarId;
+    private Long terceiroLugarId;
+
     //Relacionameto com a tabela Piloto
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "bateria_id")
+    @OneToMany(mappedBy = "bateria", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Piloto> pilotos;
 
 }

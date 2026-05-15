@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 function FormularioPiloto({ bateriaId, aoCadastrar }) {
   // Estados para controlar os inputs
@@ -10,6 +11,11 @@ function FormularioPiloto({ bateriaId, aoCadastrar }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!nome || !numero) {
+      Swal.fire('Ops!', 'Nome e número do carro são obrigatórios.', 'warning');
+      return;
+    }
+
     const novoPiloto = {
       nome: nome,
       equipe: equipe,
@@ -18,6 +24,14 @@ function FormularioPiloto({ bateriaId, aoCadastrar }) {
 
     axios.post(`http://localhost:8080/baterias/${bateriaId}/pilotos`, novoPiloto)
       .then(response => {
+        Swal.fire({
+          title: 'Sucesso!',
+          text: 'Piloto cadastrado com sucesso!',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
         setNome('');   
         setEquipe('');    
         setNumero(''); 
@@ -27,7 +41,8 @@ function FormularioPiloto({ bateriaId, aoCadastrar }) {
       })
       .catch(error => {
         console.error("Erro ao cadastrar:", error);
-        alert("Erro ao salvar piloto.");
+        const mensagemErro = error.response?.data?.message || "Erro ao salvar piloto.";
+        Swal.fire('Erro!', mensagemErro, 'error');
       });
   };
 
@@ -59,6 +74,6 @@ function FormularioPiloto({ bateriaId, aoCadastrar }) {
 
 // Estilos simples para manter o alinhamento
 const inputStyle = { marginRight: '5px', padding: '5px' };
-const buttonStyle = { padding: '5px 10px', cursor: 'pointer' };
+const buttonStyle = { padding: '5px 10px', cursor: 'pointer', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px' };
 
 export default FormularioPiloto;
