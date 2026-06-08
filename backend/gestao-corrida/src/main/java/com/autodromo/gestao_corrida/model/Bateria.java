@@ -5,16 +5,16 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity             // Isso diz ao JPA para criar uma tabela no Postgres
+@Entity
 @Table(name = "tb_bateria")
-@Data               // O Lombok cria Getters, Setters e ToString sozinho
+@Data
 public class Bateria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome; // Para dar nome às corridas
+    private String nome;
 
     private LocalDateTime horario;
 
@@ -25,13 +25,14 @@ public class Bateria {
     @Column(updatable = false)
     private final Integer limiteVagas = 15;
 
-    // Campos para o Pódio (IDs dos pilotos)
     private Long primeiroLugarId;
     private Long segundoLugarId;
     private Long terceiroLugarId;
 
-    //Relacionameto com a tabela Piloto
+    @ManyToOne
+    @JoinColumn(name = "pista_id", nullable = true)
+    private Pista pista;
+
     @OneToMany(mappedBy = "bateria", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Piloto> pilotos;
-
 }

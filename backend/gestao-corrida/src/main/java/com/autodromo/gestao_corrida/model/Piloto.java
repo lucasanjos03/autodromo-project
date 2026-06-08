@@ -23,4 +23,8 @@ public class Piloto {
     @JsonIgnore
     @ToString.Exclude
     private Bateria bateria;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = true)
+    private Usuario usuario;
 }
