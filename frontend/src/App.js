@@ -4,7 +4,6 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import ClientDashboard from './pages/ClientDashboard';
 import AdminDashboard from './pages/AdminDashboard';
-import PainelTV from './pages/PainelTV';
 
 function App() {
   const [usuario, setUsuario] = useState(null);
@@ -34,7 +33,6 @@ function App() {
         <Route path="/login" element={usuario ? <Navigate to="/dashboard" /> : <Login onLogin={loginUser} />} />
         <Route path="/dashboard" element={usuario ? <ClientDashboard usuario={usuario} /> : <Navigate to="/login" />} />
         <Route path="/admin" element={usuario && usuario.role === 'ADMIN' ? <AdminDashboard /> : <Navigate to="/login" />} />
-        <Route path="/tv" element={<PainelTV />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
@@ -56,7 +54,6 @@ function Navbar({ usuario, logout }) {
       </Link>
       <div className="navbar-links">
         <Link to="/" className="navbar-link">Home</Link>
-        <Link to="/tv" className="navbar-link">Painel TV</Link>
         
         {usuario && (
           <>
