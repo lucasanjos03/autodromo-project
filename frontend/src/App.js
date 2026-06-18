@@ -32,7 +32,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={usuario ? <Navigate to="/dashboard" /> : <Login onLogin={loginUser} />} />
         <Route path="/dashboard" element={usuario ? <ClientDashboard usuario={usuario} /> : <Navigate to="/login" />} />
-        <Route path="/admin" element={usuario && usuario.role === 'ADMIN' ? <AdminDashboard /> : <Navigate to="/login" />} />
+        <Route path="/admin" element={usuario && (usuario.role || '').toUpperCase() === 'ADMIN' ? <AdminDashboard /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
@@ -58,8 +58,8 @@ function Navbar({ usuario, logout }) {
         {usuario && (
           <>
             <Link to="/dashboard" className="navbar-link">Meu Painel</Link>
-            {usuario.role === 'ADMIN' && (
-              <Link to="/admin" className="navbar-link" style={{ color: '#ffc107' }}>Admin Terminal</Link>
+            {(usuario.role || '').toUpperCase() === 'ADMIN' && (
+              <Link to="/admin" className="navbar-link" style={{ color: '#ffc107', fontWeight: 'bold' }}>Admin Terminal</Link>
             )}
           </>
         )}

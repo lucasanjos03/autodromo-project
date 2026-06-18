@@ -209,42 +209,42 @@ function AdminDashboard() {
 
       {/* Main Content */}
       <main className="admin-content">
-        
+
         {/* TABS: BATERIAS */}
         {activeTab === 'baterias' && (
           <div>
             <h2 style={{ fontFamily: 'Orbitron', margin: '0 0 25px 0' }}>GERENCIAR BATERIAS</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '30px', alignItems: 'start' }}>
-              
+
               {/* Form Baterias */}
               <div className="glass-card">
                 <h4 style={{ fontFamily: 'Orbitron', margin: '0 0 20px 0' }}>📆 AGENDAR BATERIA</h4>
                 <form onSubmit={handleBateriaSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <div className="form-group">
                     <label className="form-label">Nome da Corrida</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      placeholder="Ex: Treino Noturno Livre" 
-                      value={bateriaForm.nome} 
-                      onChange={e => setBateriaForm({...bateriaForm, nome: e.target.value})}
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Treino Noturno Livre"
+                      value={bateriaForm.nome}
+                      onChange={e => setBateriaForm({ ...bateriaForm, nome: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Horário</label>
-                    <input 
-                      type="datetime-local" 
-                      className="form-input" 
-                      value={bateriaForm.horario} 
-                      onChange={e => setBateriaForm({...bateriaForm, horario: e.target.value})}
+                    <input
+                      type="datetime-local"
+                      className="form-input"
+                      value={bateriaForm.horario}
+                      onChange={e => setBateriaForm({ ...bateriaForm, horario: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Pista</label>
-                    <select 
-                      className="form-input" 
-                      value={bateriaForm.pistaId} 
-                      onChange={e => setBateriaForm({...bateriaForm, pistaId: e.target.value})}
+                    <select
+                      className="form-input"
+                      value={bateriaForm.pistaId}
+                      onChange={e => setBateriaForm({ ...bateriaForm, pistaId: e.target.value })}
                     >
                       <option value="">Selecione a Pista</option>
                       {pistas.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
@@ -273,58 +273,58 @@ function AdminDashboard() {
           <div>
             <h2 style={{ fontFamily: 'Orbitron', margin: '0 0 25px 0' }}>CONFIGURAR PISTAS</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '30px', alignItems: 'start' }}>
-              
+
               {/* Form Pistas */}
               <div className="glass-card">
                 <h4 style={{ fontFamily: 'Orbitron', margin: '0 0 20px 0' }}>{pistaForm.id ? '📝 EDITAR PISTA' : '🗺️ NOVA PISTA'}</h4>
                 <form onSubmit={handlePistaSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <div className="form-group">
                     <label className="form-label">Nome da Pista</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      placeholder="Ex: Interlagos Kart" 
-                      value={pistaForm.nome} 
-                      onChange={e => setPistaForm({...pistaForm, nome: e.target.value})}
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Interlagos Kart"
+                      value={pistaForm.nome}
+                      onChange={e => setPistaForm({ ...pistaForm, nome: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Extensão (metros)</label>
-                    <input 
-                      type="number" 
-                      className="form-input" 
-                      placeholder="Ex: 850" 
-                      value={pistaForm.extensaoMetros} 
-                      onChange={e => setPistaForm({...pistaForm, extensaoMetros: e.target.value})}
+                    <input
+                      type="number"
+                      className="form-input"
+                      placeholder="Ex: 850"
+                      value={pistaForm.extensaoMetros}
+                      onChange={e => setPistaForm({ ...pistaForm, extensaoMetros: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Tempo Recorde (segundos)</label>
-                    <input 
-                      type="number" 
-                      step="0.01" 
-                      className="form-input" 
-                      placeholder="Ex: 42.58" 
-                      value={pistaForm.recordeTempo} 
-                      onChange={e => setPistaForm({...pistaForm, recordeTempo: e.target.value})}
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-input"
+                      placeholder="Ex: 42.58"
+                      value={pistaForm.recordeTempo}
+                      onChange={e => setPistaForm({ ...pistaForm, recordeTempo: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Piloto Recordista</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      placeholder="Ex: Ayrton Senna" 
-                      value={pistaForm.recordePiloto} 
-                      onChange={e => setPistaForm({...pistaForm, recordePiloto: e.target.value})}
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Ayrton Senna"
+                      value={pistaForm.recordePiloto}
+                      onChange={e => setPistaForm({ ...pistaForm, recordePiloto: e.target.value })}
                     />
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button type="submit" className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}>Salvar</button>
                     {pistaForm.id && (
-                      <button 
-                        type="button" 
-                        className="btn-secondary" 
+                      <button
+                        type="button"
+                        className="btn-secondary"
                         onClick={() => setPistaForm({ id: null, nome: '', extensaoMetros: '', recordeTempo: '', recordePiloto: '' })}
                       >
                         Cancelar
@@ -371,37 +371,37 @@ function AdminDashboard() {
           <div>
             <h2 style={{ fontFamily: 'Orbitron', margin: '0 0 25px 0' }}>GERENCIAR FROTA DE KARTS</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '30px', alignItems: 'start' }}>
-              
+
               {/* Form Karts */}
               <div className="glass-card">
                 <h4 style={{ fontFamily: 'Orbitron', margin: '0 0 20px 0' }}>{kartForm.id ? '📝 EDITAR KART' : '🚗 CADASTRAR KART'}</h4>
                 <form onSubmit={handleKartSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <div className="form-group">
                     <label className="form-label">Número do Kart</label>
-                    <input 
-                      type="number" 
-                      className="form-input" 
-                      placeholder="Ex: 14" 
-                      value={kartForm.numero} 
-                      onChange={e => setKartForm({...kartForm, numero: e.target.value})}
+                    <input
+                      type="number"
+                      className="form-input"
+                      placeholder="Ex: 14"
+                      value={kartForm.numero}
+                      onChange={e => setKartForm({ ...kartForm, numero: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Modelo / Motorização</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      placeholder="Ex: Honda 13HP GX390" 
-                      value={kartForm.modelo} 
-                      onChange={e => setKartForm({...kartForm, modelo: e.target.value})}
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Honda 13HP GX390"
+                      value={kartForm.modelo}
+                      onChange={e => setKartForm({ ...kartForm, modelo: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Status</label>
-                    <select 
-                      className="form-input" 
-                      value={kartForm.status} 
-                      onChange={e => setKartForm({...kartForm, status: e.target.value})}
+                    <select
+                      className="form-input"
+                      value={kartForm.status}
+                      onChange={e => setKartForm({ ...kartForm, status: e.target.value })}
                     >
                       <option value="DISPONIVEL">Disponível para Corrida</option>
                       <option value="MANUTENCAO">Em Manutenção</option>
@@ -410,9 +410,9 @@ function AdminDashboard() {
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button type="submit" className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}>Salvar</button>
                     {kartForm.id && (
-                      <button 
-                        type="button" 
-                        className="btn-secondary" 
+                      <button
+                        type="button"
+                        className="btn-secondary"
                         onClick={() => setKartForm({ id: null, numero: '', modelo: '', status: 'DISPONIVEL' })}
                       >
                         Cancelar
@@ -439,10 +439,10 @@ function AdminDashboard() {
                         <td className="leaderboard-td" style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#e63946' }}>#{k.numero}</td>
                         <td className="leaderboard-td">{k.modelo}</td>
                         <td className="leaderboard-td">
-                          <span style={{ 
-                            padding: '3px 8px', 
-                            borderRadius: '12px', 
-                            fontSize: '0.75rem', 
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
                             backgroundColor: k.status === 'DISPONIVEL' ? 'rgba(40,167,69,0.15)' : 'rgba(220,53,69,0.15)',
                             color: k.status === 'DISPONIVEL' ? '#28a745' : '#dc3545'
                           }}>
@@ -486,10 +486,10 @@ function AdminDashboard() {
                       <td className="leaderboard-td">{u.cpf || '---'}</td>
                       <td className="leaderboard-td">{u.telefone || '---'}</td>
                       <td className="leaderboard-td">
-                        <span style={{ 
-                          padding: '3px 8px', 
-                          borderRadius: '12px', 
-                          fontSize: '0.75rem', 
+                        <span style={{
+                          padding: '3px 8px',
+                          borderRadius: '12px',
+                          fontSize: '0.75rem',
                           backgroundColor: u.role === 'ADMIN' ? 'rgba(255,193,7,0.15)' : 'rgba(255,255,255,0.05)',
                           color: u.role === 'ADMIN' ? '#ffc107' : '#a0a0ab'
                         }}>
@@ -497,9 +497,9 @@ function AdminDashboard() {
                         </span>
                       </td>
                       <td className="leaderboard-td" style={{ textCombineUpright: 'right', textAlign: 'right' }}>
-                        <button 
-                          onClick={() => toggleUserRole(u.id, u.role)} 
-                          className="btn-secondary" 
+                        <button
+                          onClick={() => toggleUserRole(u.id, u.role)}
+                          className="btn-secondary"
                           style={{ padding: '4px 10px', fontSize: '0.8rem' }}
                         >
                           Alterar para {u.role === 'ADMIN' ? 'CLIENT' : 'ADMIN'}
@@ -518,68 +518,68 @@ function AdminDashboard() {
           <div>
             <h2 style={{ fontFamily: 'Orbitron', margin: '0 0 25px 0' }}>ORGANIZAR EVENTOS & TORNEIOS</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '30px', alignItems: 'start' }}>
-              
+
               {/* Form Eventos */}
               <div className="glass-card">
                 <h4 style={{ fontFamily: 'Orbitron', margin: '0 0 20px 0' }}>{eventoForm.id ? '📝 EDITAR EVENTO' : '🏆 NOVO EVENTO'}</h4>
                 <form onSubmit={handleEventoSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   <div className="form-group">
                     <label className="form-label">Nome do Evento</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      placeholder="Ex: Grande Prêmio de Outono" 
-                      value={eventoForm.nome} 
-                      onChange={e => setEventoForm({...eventoForm, nome: e.target.value})}
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ex: Grande Prêmio de Outono"
+                      value={eventoForm.nome}
+                      onChange={e => setEventoForm({ ...eventoForm, nome: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Data e Hora</label>
-                    <input 
-                      type="datetime-local" 
-                      className="form-input" 
-                      value={eventoForm.dataHora} 
-                      onChange={e => setEventoForm({...eventoForm, dataHora: e.target.value})}
+                    <input
+                      type="datetime-local"
+                      className="form-input"
+                      value={eventoForm.dataHora}
+                      onChange={e => setEventoForm({ ...eventoForm, dataHora: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Descrição</label>
-                    <textarea 
-                      className="form-input" 
+                    <textarea
+                      className="form-input"
                       style={{ minHeight: '60px', fontFamily: 'inherit' }}
-                      placeholder="Ex: Torneio fechado com baterias qualificatórias..." 
-                      value={eventoForm.descricao} 
-                      onChange={e => setEventoForm({...eventoForm, descricao: e.target.value})}
+                      placeholder="Ex: Torneio fechado com baterias qualificatórias..."
+                      value={eventoForm.descricao}
+                      onChange={e => setEventoForm({ ...eventoForm, descricao: e.target.value })}
                     />
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <div className="form-group">
                       <label className="form-label">Inscrição (R$)</label>
-                      <input 
-                        type="number" 
-                        className="form-input" 
-                        placeholder="Ex: 120.00" 
-                        value={eventoForm.precoInscricao} 
-                        onChange={e => setEventoForm({...eventoForm, precoInscricao: e.target.value})}
+                      <input
+                        type="number"
+                        className="form-input"
+                        placeholder="Ex: 120.00"
+                        value={eventoForm.precoInscricao}
+                        onChange={e => setEventoForm({ ...eventoForm, precoInscricao: e.target.value })}
                       />
                     </div>
                     <div className="form-group">
                       <label className="form-label">Máx. Pilotos</label>
-                      <input 
-                        type="number" 
-                        className="form-input" 
-                        placeholder="Ex: 24" 
-                        value={eventoForm.limiteParticipantes} 
-                        onChange={e => setEventoForm({...eventoForm, limiteParticipantes: e.target.value})}
+                      <input
+                        type="number"
+                        className="form-input"
+                        placeholder="Ex: 24"
+                        value={eventoForm.limiteParticipantes}
+                        onChange={e => setEventoForm({ ...eventoForm, limiteParticipantes: e.target.value })}
                       />
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button type="submit" className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}>Salvar</button>
                     {eventoForm.id && (
-                      <button 
-                        type="button" 
-                        className="btn-secondary" 
+                      <button
+                        type="button"
+                        className="btn-secondary"
                         onClick={() => setEventoForm({ id: null, nome: '', dataHora: '', descricao: '', precoInscricao: '', limiteParticipantes: '' })}
                       >
                         Cancelar

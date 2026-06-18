@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
+const formatarData = (dataStr) => {
+  if (!dataStr) return 'Não definida';
+  const data = new Date(dataStr);
+  if (isNaN(data.getTime()) || data.getFullYear() <= 1970) return 'Não definida';
+  return data.toLocaleString('pt-BR');
+};
+
 function ClientDashboard({ usuario }) {
   const [minhasBaterias, setMinhasBaterias] = useState([]);
   const [bateriasDisponiveis, setBateriasDisponiveis] = useState([]);
@@ -12,6 +19,7 @@ function ClientDashboard({ usuario }) {
     axios.get('http://localhost:8080/baterias')
       .then(res => {
         const todas = res.data;
+        const agora = new Date();
 
         // Filtrar minhas baterias (onde eu sou um piloto)
         const minhas = todas.filter(b => 
@@ -19,9 +27,10 @@ function ClientDashboard({ usuario }) {
         );
         setMinhasBaterias(minhas);
 
-        // Filtrar baterias públicas disponíveis para inscrição (PENDENTES e onde eu ainda NÃO estou inscrito)
+        // Filtrar baterias públicas disponíveis para inscrição (PENDENTES, futuras e onde eu ainda NÃO estou inscrito)
         const disponiveis = todas.filter(b => 
           (b.status || 'PENDENTE') === 'PENDENTE' && 
+          b.horario && new Date(b.horario) > agora &&
           b.pilotos.length < b.limiteVagas &&
           (!b.pilotos || !b.pilotos.some(p => p.usuario && p.usuario.id === usuario.id))
         );
@@ -149,7 +158,7 @@ function ClientDashboard({ usuario }) {
                     <div>
                       <h4 style={{ margin: '0 0 5px 0' }}>{b.nome}</h4>
                       <span style={{ fontSize: '0.8rem', color: '#a0a0ab' }}>
-                        📅 {new Date(b.horario).toLocaleString('pt-BR')} | Pista: {b.pista ? b.pista.nome : 'Geral'}
+                        📅 {formatarData(b.horario)} | Pista: {b.pista ? b.pista.nome : 'Geral'}
                       </span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -176,7 +185,7 @@ function ClientDashboard({ usuario }) {
                     <div>
                       <h4 style={{ margin: '0 0 5px 0' }}>{b.nome}</h4>
                       <p style={{ margin: 0, fontSize: '0.8rem', color: '#a0a0ab' }}>
-                        🕒 {new Date(b.horario).toLocaleString('pt-BR')} | Pista: {b.pista ? b.pista.nome : 'Geral'}
+                        🕒 {formatarData(b.horario)} | Pista: {b.pista ? b.pista.nome : 'Geral'}
                       </p>
                       <p style={{ margin: '5px 0 0 0', fontSize: '0.8rem', color: '#e63946' }}>
                         Vagas Restantes: {b.limiteVagas - b.pilotos.length}

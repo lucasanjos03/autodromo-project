@@ -3,6 +3,7 @@ package com.autodromo.gestao_corrida.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,5 +35,5 @@ public class Bateria {
     private Pista pista;
 
     @OneToMany(mappedBy = "bateria", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Piloto> pilotos;
+    private List<Piloto> pilotos = new ArrayList<>();
 }

@@ -2,14 +2,29 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+const formatarData = (dataStr) => {
+  if (!dataStr) return 'Não definida';
+  const data = new Date(dataStr);
+  if (isNaN(data.getTime()) || data.getFullYear() <= 1970) return 'Não definida';
+  return data.toLocaleString('pt-BR');
+};
+
 function Home() {
   const [baterias, setBaterias] = useState([]);
   const [pistas, setPistas] = useState([]);
 
   useEffect(() => {
-    // Carregar dados das baterias
+    // Carregar dados das baterias (apenas pendentes e com datas futuras)
     axios.get('http://localhost:8080/baterias')
-      .then(res => setBaterias(res.data.filter(b => (b.status || 'PENDENTE') !== 'FINALIZADA')))
+      .then(res => {
+        const agora = new Date();
+        const futuras = res.data.filter(b => {
+          const isFinalizada = (b.status || 'PENDENTE') === 'FINALIZADA';
+          const isPassada = b.horario && new Date(b.horario) < agora;
+          return !isFinalizada && !isPassada;
+        });
+        setBaterias(futuras);
+      })
       .catch(err => console.error("Erro ao buscar baterias", err));
 
     // Carregar dados das pistas
@@ -89,7 +104,7 @@ function Home() {
       {/* DETALHES DOS SERVIÇOS */}
       <section style={{ padding: '80px 40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <h2 style={{ fontFamily: 'Orbitron', letterSpacing: '2px', color: '#fff' }}>O QUE OFERECEMOS</h2>
+          <h2 style={{ fontFamily: 'Orbitron', letterSpacing: '2px', color: '#fff' }}> O QUE OFERECEMOS</h2>
           <div style={{ width: '60px', height: '3px', backgroundColor: '#e63946', margin: '15px auto 0 auto' }}></div>
         </div>
 
@@ -204,7 +219,7 @@ function Home() {
                     <span className={`status-badge ${(b.status || 'PENDENTE').toLowerCase().replace('_', '-')}`}>{b.status || 'PENDENTE'}</span>
                   </div>
                   <p style={{ margin: '15px 0 5px 0', fontSize: '0.9rem', color: '#a0a0ab' }}>
-                    🕒 Horário: <strong>{new Date(b.horario).toLocaleString('pt-BR')}</strong>
+                    🕒 Horário: <strong>{formatarData(b.horario)}</strong>
                   </p>
                   <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#a0a0ab' }}>
                     🏎️ Pista: <strong>{b.pista ? b.pista.nome : 'Pista Geral'}</strong>
@@ -242,7 +257,7 @@ function Home() {
               <h4 style={{ fontFamily: 'Orbitron', margin: '0 0 10px 0', fontSize: '1.2rem' }}>Bateria Individual</h4>
               <p style={{ color: '#a0a0ab', fontSize: '0.9rem', marginBottom: '20px' }}>Para pilotos que desejam correr sozinhos ou se juntar a baterias abertas.</p>
               <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#e63946', fontFamily: 'Orbitron', marginBottom: '20px' }}>
-                R$ 90<span style={{ fontSize: '1rem', color: '#a0a0ab' }}> / 25 min</span>
+                R$ 120<span style={{ fontSize: '1rem', color: '#a0a0ab' }}> / 30 min</span>
               </div>
               <ul style={{ listStyle: 'none', padding: '0', margin: '0 0 30px 0', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', color: '#a0a0ab', textAlign: 'left' }}>
                 <li>✔️ Macacão e capacete inclusos</li>
@@ -259,7 +274,7 @@ function Home() {
               <h4 style={{ fontFamily: 'Orbitron', margin: '0 0 10px 0', fontSize: '1.2rem' }}>Pacote Grupo</h4>
               <p style={{ color: '#a0a0ab', fontSize: '0.9rem', marginBottom: '20px' }}>Exclusivo para grupos e amigos com grid de largada dedicado.</p>
               <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#e63946', fontFamily: 'Orbitron', marginBottom: '20px' }}>
-                R$ 80<span style={{ fontSize: '1rem', color: '#a0a0ab' }}> / por piloto</span>
+                R$ 95<span style={{ fontSize: '1rem', color: '#a0a0ab' }}> / por piloto</span>
               </div>
               <ul style={{ listStyle: 'none', padding: '0', margin: '0 0 30px 0', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', color: '#a0a0ab', textAlign: 'left' }}>
                 <li>✔️ Mínimo de 10 pilotos</li>

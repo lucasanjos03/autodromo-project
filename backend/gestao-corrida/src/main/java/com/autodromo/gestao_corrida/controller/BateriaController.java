@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -99,9 +100,20 @@ public class BateriaController {
         Bateria bateria = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
 
-        if (!"PENDENTE".equals(bateria.getStatus())) {
+        String status = bateria.getStatus() != null ? bateria.getStatus() : "PENDENTE";
+        if (!"PENDENTE".equals(status)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
-                "Não é possível adicionar pilotos em uma bateria " + bateria.getStatus());
+                "Não é possível adicionar pilotos em uma bateria " + status);
+        }
+
+        // Only allow registration in batteries with future date/time
+        if (bateria.getHorario() != null && bateria.getHorario().isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "Não é possível se inscrever em baterias passadas!");
+        }
+
+        if (bateria.getPilotos() == null) {
+            bateria.setPilotos(new java.util.ArrayList<>());
         }
 
         if (bateria.getPilotos().size() >= bateria.getLimiteVagas()) {
@@ -127,8 +139,10 @@ public class BateriaController {
         Bateria bateria = repository.findById(bateriaId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
 
-        bateria.getPilotos().removeIf(p -> p.getId().equals(pilotoId));
-        bateria.setVagasOcupadas(bateria.getPilotos().size());
+        if (bateria.getPilotos() != null) {
+            bateria.getPilotos().removeIf(p -> p.getId().equals(pilotoId));
+            bateria.setVagasOcupadas(bateria.getPilotos().size());
+        }
 
         return repository.save(bateria);
     }
@@ -148,7 +162,8 @@ public class BateriaController {
         Bateria bateria = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
 
-        if (!"FINALIZADA".equals(bateria.getStatus())) {
+        String status = bateria.getStatus() != null ? bateria.getStatus() : "PENDENTE";
+        if (!"FINALIZADA".equals(status)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A bateria precisa estar FINALIZADA para definir o pódio.");
         }
 

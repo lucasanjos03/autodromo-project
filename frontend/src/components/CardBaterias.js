@@ -16,20 +16,20 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
     axios.patch(`http://localhost:8080/baterias/${bateria.id}/status`, novoStatus, {
       headers: { "Content-Type": "text/plain" }
     })
-    .then(() => {
-      Swal.fire({
-        title: 'Status Atualizado!',
-        text: `Bateria agora está ${novoStatus}`,
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false
-      });
-      aoAtualizar(); 
-    })
-    .catch(err => {
+      .then(() => {
+        Swal.fire({
+          title: 'Status Atualizado!',
+          text: `Bateria agora está ${novoStatus}`,
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        aoAtualizar();
+      })
+      .catch(err => {
         console.error("Erro ao mudar status", err);
         Swal.fire('Erro!', 'Não foi possível alterar o status.', 'error');
-    });
+      });
   };
 
   const deletarBateria = () => {
@@ -87,10 +87,10 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
 
   return (
     <div className="glass-card" style={{ borderLeft: `6px solid ${currentStatus === 'EM_ANDAMENTO' ? '#28a745' : currentStatus === 'FINALIZADA' ? '#6c757d' : '#ffc107'}`, marginBottom: '25px', position: 'relative' }}>
-      
+
       {/* Botão de Excluir Bateria Completa */}
-      <button 
-        onClick={deletarBateria} 
+      <button
+        onClick={deletarBateria}
         style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontSize: '1.2rem' }}
         title="Excluir Bateria"
       >
@@ -101,13 +101,13 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
         <h3 style={{ fontFamily: 'Orbitron', margin: 0 }}>🏎️ {bateria.nome || "Corrida sem Nome"}</h3>
         <span className={`status-badge ${currentStatus.toLowerCase().replace('_', '-')}`}>{currentStatus}</span>
       </div>
-      
+
       <div style={{ marginTop: '10px', fontSize: '0.9rem', color: '#a0a0ab', display: 'flex', gap: '20px' }}>
         <p style={{ margin: 0 }}><strong>Horário:</strong> {new Date(bateria.horario).toLocaleString('pt-BR')}</p>
         <p style={{ margin: 0 }}><strong>Pista:</strong> {bateria.pista ? bateria.pista.nome : 'Pista Geral'}</p>
         <p style={{ margin: 0 }}><strong>Vagas:</strong> {bateria.pilotos?.length || 0} / {bateria.limiteVagas}</p>
       </div>
-      
+
       <div style={{ margin: '15px 0', display: 'flex', gap: '10px' }}>
         <button onClick={() => alterarStatus('EM_ANDAMENTO')} disabled={currentStatus !== 'PENDENTE'} className="btn-primary" style={{ padding: '6px 14px', fontSize: '0.85rem', textTransform: 'none' }}>
           ▶️ Iniciar Corrida
@@ -135,25 +135,25 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
         <div style={{ marginTop: '15px', padding: '15px', backgroundColor: 'rgba(255, 193, 7, 0.05)', borderRadius: '8px', border: '1px solid rgba(255, 193, 7, 0.2)' }}>
           <h6 style={{ margin: '0 0 10px 0', color: '#ffc107', fontSize: '0.9rem', fontFamily: 'Orbitron' }}>🏆 REGISTRAR PODIO:</h6>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <select 
-              value={podio.primeiroLugarId} 
-              onChange={e => setPodio({...podio, primeiroLugarId: e.target.value})} 
+            <select
+              value={podio.primeiroLugarId}
+              onChange={e => setPodio({ ...podio, primeiroLugarId: e.target.value })}
               style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#121216', color: 'white', border: '1px solid #2a2a35' }}
             >
               <option value="">1º Lugar</option>
               {bateria.pilotos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
             </select>
-            <select 
-              value={podio.segundoLugarId} 
-              onChange={e => setPodio({...podio, segundoLugarId: e.target.value})} 
+            <select
+              value={podio.segundoLugarId}
+              onChange={e => setPodio({ ...podio, segundoLugarId: e.target.value })}
               style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#121216', color: 'white', border: '1px solid #2a2a35' }}
             >
               <option value="">2º Lugar</option>
               {bateria.pilotos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
             </select>
-            <select 
-              value={podio.terceiroLugarId} 
-              onChange={e => setPodio({...podio, terceiroLugarId: e.target.value})} 
+            <select
+              value={podio.terceiroLugarId}
+              onChange={e => setPodio({ ...podio, terceiroLugarId: e.target.value })}
               style={{ padding: '6px', borderRadius: '4px', backgroundColor: '#121216', color: 'white', border: '1px solid #2a2a35' }}
             >
               <option value="">3º Lugar</option>
