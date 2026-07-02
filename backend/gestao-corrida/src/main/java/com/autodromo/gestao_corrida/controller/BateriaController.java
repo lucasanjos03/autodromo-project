@@ -2,11 +2,19 @@ package com.autodromo.gestao_corrida.controller;
 
 import com.autodromo.gestao_corrida.model.Bateria;
 import com.autodromo.gestao_corrida.model.Piloto;
+import com.autodromo.gestao_corrida.model.Pista;
+import com.autodromo.gestao_corrida.model.Usuario;
 import com.autodromo.gestao_corrida.repository.BateriaRepository;
+import com.autodromo.gestao_corrida.repository.PistaRepository;
+import com.autodromo.gestao_corrida.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -16,36 +24,153 @@ public class BateriaController {
     @Autowired
     private BateriaRepository repository;
 
-    @GetMapping // Quando você acessar localhost:8080/baterias metodo get
+    @Autowired
+    private PistaRepository pistaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @GetMapping
     public List<Bateria> listarTodas() {
         return repository.findAll();
     }
+
+    @PostMapping
+    public Bateria criar(@RequestBody Map<String, Object> payload) {
+        Bateria bateria = new Bateria();
+        bateria.setNome((String) payload.get("nome"));
+        
+        if (payload.get("horario") != null) {
+            bateria.setHorario(java.time.LocalDateTime.parse((String) payload.get("horario")));
+        } else {
+            bateria.setHorario(java.time.LocalDateTime.now());
+        }
+
+        if (payload.get("pistaId") != null) {
+            Long pistaId = Long.valueOf(payload.get("pistaId").toString());
+            Pista pista = pistaRepository.findById(pistaId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pista não encontrada"));
+            bateria.setPista(pista);
+        }
+
+        bateria.setStatus("PENDENTE");
+        bateria.setVagasOcupadas(0);
+        return repository.save(bateria);
+    }
+
+    @PutMapping("/{id}")
+    public Bateria atualizar(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
+        Bateria bateria = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
+
+        bateria.setNome((String) payload.get("nome"));
+        
+        if (payload.get("horario") != null) {
+            bateria.setHorario(java.time.LocalDateTime.parse((String) payload.get("horario")));
+        }
+
+        if (payload.containsKey("pistaId")) {
+            if (payload.get("pistaId") != null) {
+                Long pistaId = Long.valueOf(payload.get("pistaId").toString());
+                Pista pista = pistaRepository.findById(pistaId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pista não encontrada"));
+                bateria.setPista(pista);
+            } else {
+                bateria.setPista(null);
+            }
+        }
+
+        if (payload.get("status") != null) {
+            bateria.setStatus((String) payload.get("status"));
+        }
+
+        return repository.save(bateria);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletar(@PathVariable Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada");
+        }
+        repository.deleteById(id);
+    }
+
     @PostMapping("/{id}/pilotos")
     public Bateria adicionarPiloto(@PathVariable Long id, @RequestBody Piloto piloto) {
-        // 1. Busca a bateria pelo ID que veio na URL
         Bateria bateria = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bateria não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
 
-        // 2. Associa o piloto à bateria encontrada
+        String status = bateria.getStatus() != null ? bateria.getStatus() : "PENDENTE";
+        if (!"PENDENTE".equals(status)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "Não é possível adicionar pilotos em uma bateria " + status);
+        }
+
+        // Only allow registration in batteries with future date/time
+        if (bateria.getHorario() != null && bateria.getHorario().isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "Não é possível se inscrever em baterias passadas!");
+        }
+
+        if (bateria.getPilotos() == null) {
+            bateria.setPilotos(new java.util.ArrayList<>());
+        }
+
+        if (bateria.getPilotos().size() >= bateria.getLimiteVagas()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A bateria já está lotada!");
+        }
+
+        // Check if user is associated
+        if (piloto.getUsuario() != null && piloto.getUsuario().getId() != null) {
+            Usuario usuario = usuarioRepository.findById(piloto.getUsuario().getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário associado não encontrado"));
+            piloto.setUsuario(usuario);
+        }
+
         piloto.setBateria(bateria);
-
-        // 3. Adiciona o piloto na lista da bateria (importante para o JPA entender o vínculo)
         bateria.getPilotos().add(piloto);
+        bateria.setVagasOcupadas(bateria.getPilotos().size());
 
-        // 4. Salva a bateria (como o cascade está configurado, ele salva o piloto junto)
+        return repository.save(bateria);
+    }
+
+    @DeleteMapping("/{bateriaId}/pilotos/{pilotoId}")
+    public Bateria removerPiloto(@PathVariable Long bateriaId, @PathVariable Long pilotoId) {
+        Bateria bateria = repository.findById(bateriaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
+
+        if (bateria.getPilotos() != null) {
+            bateria.getPilotos().removeIf(p -> p.getId().equals(pilotoId));
+            bateria.setVagasOcupadas(bateria.getPilotos().size());
+        }
+
         return repository.save(bateria);
     }
 
     @PatchMapping("/{id}/status")
     public Bateria atualizarStatus(@PathVariable Long id, @RequestBody String novoStatus) {
         Bateria bateria = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bateria não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
 
-        // 2. Limpa aspas do JSON e espaços em branco que podem vir do frontend
         String statusLimpo = novoStatus.replace("\"", "").trim();
-
-        // 3. Atualiza e salva
         bateria.setStatus(statusLimpo);
         return repository.save(bateria);
     }
+
+    @PatchMapping("/{id}/podio")
+    public Bateria definirPodio(@PathVariable Long id, @RequestBody Map<String, Long> podio) {
+        Bateria bateria = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bateria não encontrada"));
+
+        String status = bateria.getStatus() != null ? bateria.getStatus() : "PENDENTE";
+        if (!"FINALIZADA".equals(status)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A bateria precisa estar FINALIZADA para definir o pódio.");
+        }
+
+        bateria.setPrimeiroLugarId(podio.get("primeiroLugarId"));
+        bateria.setSegundoLugarId(podio.get("segundoLugarId"));
+        bateria.setTerceiroLugarId(podio.get("terceiroLugarId"));
+
+        return repository.save(bateria);
     }
+}
