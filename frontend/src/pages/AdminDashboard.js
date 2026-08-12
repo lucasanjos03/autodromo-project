@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import Swal from 'sweetalert2';
 import CardBateria from '../components/CardBaterias';
 
@@ -20,11 +20,11 @@ function AdminDashboard() {
   const [eventoForm, setEventoForm] = useState({ id: null, nome: '', dataHora: '', descricao: '', precoInscricao: '', limiteParticipantes: '' });
 
   // Load datasets
-  const loadBaterias = () => axios.get('http://localhost:8080/baterias').then(res => setBaterias(res.data)).catch(err => console.error(err));
-  const loadPistas = () => axios.get('http://localhost:8080/pistas').then(res => setPistas(res.data)).catch(err => console.error(err));
-  const loadKarts = () => axios.get('http://localhost:8080/karts').then(res => setKarts(res.data)).catch(err => console.error(err));
-  const loadUsuarios = () => axios.get('http://localhost:8080/usuarios').then(res => setUsuarios(res.data)).catch(err => console.error(err));
-  const loadEventos = () => axios.get('http://localhost:8080/eventos').then(res => setEventos(res.data)).catch(err => console.error(err));
+  const loadBaterias = () => api.get('/baterias').then(res => setBaterias(res.data)).catch(err => console.error(err));
+  const loadPistas = () => api.get('/pistas').then(res => setPistas(res.data)).catch(err => console.error(err));
+  const loadKarts = () => api.get('/karts').then(res => setKarts(res.data)).catch(err => console.error(err));
+  const loadUsuarios = () => api.get('/usuarios').then(res => setUsuarios(res.data)).catch(err => console.error(err));
+  const loadEventos = () => api.get('/eventos').then(res => setEventos(res.data)).catch(err => console.error(err));
 
   useEffect(() => {
     loadBaterias();
@@ -42,7 +42,7 @@ function AdminDashboard() {
       return;
     }
 
-    axios.post('http://localhost:8080/baterias', bateriaForm)
+    api.post('/baterias', bateriaForm)
       .then(() => {
         Swal.fire('Criada!', 'Bateria agendada com sucesso.', 'success');
         setBateriaForm({ nome: '', horario: '', pistaId: '' });
@@ -68,7 +68,7 @@ function AdminDashboard() {
 
     if (pistaForm.id) {
       // Editar
-      axios.put(`http://localhost:8080/pistas/${pistaForm.id}`, payload)
+      api.put(`/pistas/${pistaForm.id}`, payload)
         .then(() => {
           Swal.fire('Atualizada!', 'Pista editada com sucesso.', 'success');
           setPistaForm({ id: null, nome: '', extensaoMetros: '', recordeTempo: '', recordePiloto: '' });
@@ -78,7 +78,7 @@ function AdminDashboard() {
         .catch(err => Swal.fire('Erro', 'Erro ao editar pista.', 'error'));
     } else {
       // Criar
-      axios.post('http://localhost:8080/pistas', payload)
+      api.post('/pistas', payload)
         .then(() => {
           Swal.fire('Criada!', 'Pista cadastrada com sucesso.', 'success');
           setPistaForm({ id: null, nome: '', extensaoMetros: '', recordeTempo: '', recordePiloto: '' });
@@ -97,7 +97,7 @@ function AdminDashboard() {
       confirmButtonText: 'Deletar'
     }).then(result => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:8080/pistas/${id}`)
+        api.delete(`/pistas/${id}`)
           .then(() => {
             Swal.fire('Excluída!', 'Pista deletada com sucesso.', 'success');
             loadPistas();
@@ -122,14 +122,14 @@ function AdminDashboard() {
     };
 
     if (kartForm.id) {
-      axios.put(`http://localhost:8080/karts/${kartForm.id}`, payload)
+      api.put(`/karts/${kartForm.id}`, payload)
         .then(() => {
           Swal.fire('Atualizado!', 'Kart editado.', 'success');
           setKartForm({ id: null, numero: '', modelo: '', status: 'DISPONIVEL' });
           loadKarts();
         });
     } else {
-      axios.post('http://localhost:8080/karts', payload)
+      api.post('/karts', payload)
         .then(() => {
           Swal.fire('Cadastrado!', 'Novo kart inserido na frota.', 'success');
           setKartForm({ id: null, numero: '', modelo: '', status: 'DISPONIVEL' });
@@ -139,7 +139,7 @@ function AdminDashboard() {
   };
 
   const deleteKart = (id) => {
-    axios.delete(`http://localhost:8080/karts/${id}`).then(() => {
+    api.delete(`/karts/${id}`).then(() => {
       Swal.fire('Excluído!', 'Kart removido da frota.', 'success');
       loadKarts();
     });
@@ -162,14 +162,14 @@ function AdminDashboard() {
     };
 
     if (eventoForm.id) {
-      axios.put(`http://localhost:8080/eventos/${eventoForm.id}`, payload)
+      api.put(`/eventos/${eventoForm.id}`, payload)
         .then(() => {
           Swal.fire('Atualizado!', 'Evento editado.', 'success');
           setEventoForm({ id: null, nome: '', dataHora: '', descricao: '', precoInscricao: '', limiteParticipantes: '' });
           loadEventos();
         });
     } else {
-      axios.post('http://localhost:8080/eventos', payload)
+      api.post('/eventos', payload)
         .then(() => {
           Swal.fire('Agendado!', 'Novo evento criado.', 'success');
           setEventoForm({ id: null, nome: '', dataHora: '', descricao: '', precoInscricao: '', limiteParticipantes: '' });
@@ -179,7 +179,7 @@ function AdminDashboard() {
   };
 
   const deleteEvento = (id) => {
-    axios.delete(`http://localhost:8080/eventos/${id}`).then(() => {
+    api.delete(`/eventos/${id}`).then(() => {
       Swal.fire('Deletado!', 'Evento removido.', 'success');
       loadEventos();
     });
@@ -188,7 +188,7 @@ function AdminDashboard() {
   // --- Users Role modification ---
   const toggleUserRole = (id, currentRole) => {
     const newRole = currentRole === 'ADMIN' ? 'CLIENT' : 'ADMIN';
-    axios.patch(`http://localhost:8080/usuarios/${id}/role`, { role: newRole })
+    api.patch(`/usuarios/${id}/role`, { role: newRole })
       .then(() => {
         Swal.fire('Atualizado!', `Usuário agora é ${newRole}.`, 'success');
         loadUsuarios();

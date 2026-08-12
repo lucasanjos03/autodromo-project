@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import Swal from 'sweetalert2';
 
 const formatarData = (dataStr) => {
@@ -16,7 +16,7 @@ function ClientDashboard({ usuario }) {
 
   const carregarDados = () => {
     // Buscar baterias
-    axios.get('http://localhost:8080/baterias')
+    api.get('/baterias')
       .then(res => {
         const todas = res.data;
         const agora = new Date();
@@ -39,7 +39,7 @@ function ClientDashboard({ usuario }) {
       .catch(err => console.error("Erro ao buscar baterias", err));
 
     // Buscar pistas
-    axios.get('http://localhost:8080/pistas')
+    api.get('/pistas')
       .then(res => setPistas(res.data))
       .catch(err => console.error("Erro ao buscar pistas", err));
   };
@@ -75,7 +75,7 @@ function ClientDashboard({ usuario }) {
           }
         };
 
-        axios.post(`http://localhost:8080/baterias/${bateriaId}/pilotos`, novoPiloto)
+        api.post(`/baterias/${bateriaId}/pilotos`, novoPiloto)
           .then(() => {
             Swal.fire('Inscrição confirmada!', 'Você foi registrado para a corrida com sucesso.', 'success');
             carregarDados();

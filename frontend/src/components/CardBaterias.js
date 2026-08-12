@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import Swal from 'sweetalert2';
 import FormularioPiloto from './FormularioPiloto';
 
@@ -13,7 +13,7 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
   });
 
   const alterarStatus = (novoStatus) => {
-    axios.patch(`http://localhost:8080/baterias/${bateria.id}/status`, novoStatus, {
+    api.patch(`/baterias/${bateria.id}/status`, novoStatus, {
       headers: { "Content-Type": "text/plain" }
     })
       .then(() => {
@@ -44,7 +44,7 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:8080/baterias/${bateria.id}`)
+        api.delete(`/baterias/${bateria.id}`)
           .then(() => {
             Swal.fire('Deletada!', 'A bateria foi excluída.', 'success');
             aoAtualizar();
@@ -66,7 +66,7 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:8080/baterias/${bateria.id}/pilotos/${pilotoId}`)
+        api.delete(`/baterias/${bateria.id}/pilotos/${pilotoId}`)
           .then(() => {
             Swal.fire('Removido!', 'O piloto foi removido da bateria.', 'success');
             aoAtualizar();
@@ -77,7 +77,7 @@ function CardBateria({ bateria, aoAtualizar, pistas = [] }) {
   };
 
   const salvarPodio = () => {
-    axios.patch(`http://localhost:8080/baterias/${bateria.id}/podio`, podio)
+    api.patch(`/baterias/${bateria.id}/podio`, podio)
       .then(() => {
         Swal.fire('Sucesso!', 'Pódio definido com sucesso!', 'success');
         aoAtualizar();

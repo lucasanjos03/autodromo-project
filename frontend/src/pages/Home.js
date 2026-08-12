@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Link } from 'react-router-dom';
 
 const formatarData = (dataStr) => {
@@ -15,7 +15,7 @@ function Home() {
 
   useEffect(() => {
     // Carregar dados das baterias (apenas pendentes e com datas futuras)
-    axios.get('http://localhost:8080/baterias')
+    api.get('/baterias')
       .then(res => {
         const agora = new Date();
         const futuras = res.data.filter(b => {
@@ -28,7 +28,7 @@ function Home() {
       .catch(err => console.error("Erro ao buscar baterias", err));
 
     // Carregar dados das pistas
-    axios.get('http://localhost:8080/pistas')
+    api.get('/pistas')
       .then(res => setPistas(res.data))
       .catch(err => console.error("Erro ao buscar pistas", err));
   }, []);

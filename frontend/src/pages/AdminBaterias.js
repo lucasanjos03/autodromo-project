@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import CardBateria from '../components/CardBaterias'; 
 
 function AdminBaterias() {
@@ -7,7 +7,7 @@ function AdminBaterias() {
 
   // Função para buscar os dados do Java
   const carregarBaterias = () => {
-    axios.get('http://localhost:8080/baterias')
+    api.get('/baterias')
       .then(response => {
         setBaterias(response.data);
       })

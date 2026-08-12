@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 function PainelTV() {
   const [baterias, setBaterias] = useState([]);
 
   const buscarDados = () => {
-    axios.get('http://localhost:8080/baterias')
+    api.get('/baterias')
       .then(res => setBaterias(res.data))
       .catch(err => console.error("Erro ao buscar dados da TV", err));
   };

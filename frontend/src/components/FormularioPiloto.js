@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import Swal from 'sweetalert2';
 
 function FormularioPiloto({ bateriaId, aoCadastrar }) {
@@ -22,7 +22,7 @@ function FormularioPiloto({ bateriaId, aoCadastrar }) {
       numeroCarro: parseInt(numero)
     };
 
-    axios.post(`http://localhost:8080/baterias/${bateriaId}/pilotos`, novoPiloto)
+    api.post(`/baterias/${bateriaId}/pilotos`, novoPiloto)
       .then(response => {
         Swal.fire({
           title: 'Sucesso!',
