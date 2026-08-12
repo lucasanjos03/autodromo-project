@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import Swal from 'sweetalert2';
 
 function Login({ onLogin }) {
@@ -20,7 +20,7 @@ function Login({ onLogin }) {
 
     if (isRegister) {
       // Registrar
-      axios.post('http://localhost:8080/usuarios/register', { nome, email, senha, cpf, telefone })
+      api.post('/usuarios/register', { nome, email, senha, cpf, telefone })
         .then(res => {
           Swal.fire({
             title: 'Cadastro Realizado!',
@@ -39,16 +39,17 @@ function Login({ onLogin }) {
         });
     } else {
       // Login
-      axios.post('http://localhost:8080/usuarios/login', { email, senha })
+      api.post('/usuarios/login', { email, senha })
         .then(res => {
+          localStorage.setItem('jwt_token', res.data.token);
           Swal.fire({
             title: 'Bem-vindo de volta!',
-            text: `Olá, ${res.data.nome}!`,
+            text: `Olá, ${res.data.usuario.nome}!`,
             icon: 'success',
             timer: 1500,
             showConfirmButton: false
           });
-          onLogin(res.data);
+          onLogin(res.data.usuario);
         })
         .catch(err => {
           console.error(err);

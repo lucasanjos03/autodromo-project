@@ -22,6 +22,7 @@ function App() {
 
   const logoutUser = () => {
     localStorage.removeItem('usuario_sessao');
+    localStorage.removeItem('jwt_token'); // Clear the token
     setUsuario(null);
   };
 
