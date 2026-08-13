@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.time.LocalDateTime;
 
 @Component
@@ -13,6 +15,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private PistaRepository pistaRepository;
@@ -30,12 +35,19 @@ public class DataInitializer implements CommandLineRunner {
             Usuario admin = new Usuario();
             admin.setNome("Administrador KartPro");
             admin.setEmail("admin@kartpro.com");
-            admin.setSenha("admin123");
+            admin.setSenha(passwordEncoder.encode("admin123"));
             admin.setRole("ADMIN");
             admin.setCpf("000.000.000-00");
             admin.setTelefone("(11) 99999-9999");
             usuarioRepository.save(admin);
             System.out.println(">>> SEED: Usuário Admin criado (admin@kartpro.com / admin123)");
+        } else {
+            Usuario admin = usuarioRepository.findByEmail("admin@kartpro.com").get();
+            if (admin.getSenha() == null || !admin.getSenha().startsWith("$2")) {
+                admin.setSenha(passwordEncoder.encode("admin123"));
+                usuarioRepository.save(admin);
+                System.out.println(">>> SEED: Senha do Admin existente atualizada para Hash BCrypt");
+            }
         }
 
         // 2. Seed default Client (Optional, for easy testing)
@@ -43,12 +55,19 @@ public class DataInitializer implements CommandLineRunner {
             Usuario client = new Usuario();
             client.setNome("Ayrton Silva");
             client.setEmail("piloto@kartpro.com");
-            client.setSenha("piloto123");
+            client.setSenha(passwordEncoder.encode("piloto123"));
             client.setRole("CLIENT");
             client.setCpf("111.111.111-11");
             client.setTelefone("(11) 88888-8888");
             usuarioRepository.save(client);
             System.out.println(">>> SEED: Usuário Piloto criado (piloto@kartpro.com / piloto123)");
+        } else {
+            Usuario client = usuarioRepository.findByEmail("piloto@kartpro.com").get();
+            if (client.getSenha() == null || !client.getSenha().startsWith("$2")) {
+                client.setSenha(passwordEncoder.encode("piloto123"));
+                usuarioRepository.save(client);
+                System.out.println(">>> SEED: Senha do Piloto existente atualizada para Hash BCrypt");
+            }
         }
 
         // 3. Seed Pistas if none exist
